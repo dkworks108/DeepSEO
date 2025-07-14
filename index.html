@@ -312,11 +312,11 @@ https://goyalstech.com/services/seo-optimization"
 
             <div class="flex justify-center gap-4 mt-6">
                 <button id="copy-button"
-                        class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 rounded-full shadow-md transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2">
+                        class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 rounded-full shadow-md transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2" disabled>
                     Copy Text
                 </button>
                 <button id="share-button"
-                        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-full shadow-md transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2">
+                        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-full shadow-md transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2" disabled>
                     Share
                 </button>
             </div>
@@ -407,7 +407,7 @@ https://goyalstech.com/services/seo-optimization"
         const articleTitleInput = document.getElementById('article-title-input');
         const wordLengthSelect = document.getElementById('word-length-select');
         const wordLimitHidden = document.getElementById('word-limit-hidden');
-        const contentFormatRadios = document.querySelectorAll('input[name="content-format"]');
+        const contentFormatRadios = document.querySelectorAll('input[name="content-format"]'); // This variable is not used but kept for consistency if needed later
         const linkDensitySelect = document.getElementById('link-density-select');
         const writingStyleToneSelect = document.getElementById('writing-style-tone-select');
         const keywordsInput = document.getElementById('keywords-input');
@@ -450,10 +450,10 @@ https://goyalstech.com/services/seo-optimization"
         function executeCommand(command, value = null) {
             document.execCommand(command, false, value);
             outputEditor.focus(); // Keep focus on the editor after command
-            // Add temporary active state for buttons that don't auto-toggle
+            // Add temporary active state for buttons that don't auto-toggle (excluding undo/redo/insert types)
             const button = document.querySelector(`.editor-btn[data-command="${command}"][data-value="${value}"]`) ||
                            document.querySelector(`.editor-btn[data-command="${command}"]`);
-            if (button && !['undo', 'redo'].includes(command)) { // Don't highlight undo/redo
+            if (button && !['undo', 'redo', 'createLink', 'insertHTML'].includes(command)) {
                 button.classList.add('active');
                 setTimeout(() => {
                     button.classList.remove('active');
@@ -501,69 +501,68 @@ https://goyalstech.com/services/seo-optimization"
         // Function to convert selected text to uppercase
         uppercaseBtn.addEventListener('click', () => {
             const selection = window.getSelection();
-            if (selection.rangeCount > 0) {
-                const range = selection.getRangeAt(0);
-                const selectedText = range.toString();
-                if (selectedText) {
-                    const newText = document.createTextNode(selectedText.toUpperCase());
-                    range.deleteContents();
-                    range.insertNode(newText);
-                    showMessage('Text converted to uppercase.');
-                    outputEditor.focus();
-                } else {
-                    showMessage('Select text to convert to uppercase.');
-                }
+            if (!selection.rangeCount || selection.isCollapsed) {
+                showMessage('Select text to convert to uppercase.');
+                return;
+            }
+            const range = selection.getRangeAt(0);
+            const selectedText = range.toString();
+            if (selectedText) {
+                const newText = document.createTextNode(selectedText.toUpperCase());
+                range.deleteContents();
+                range.insertNode(newText);
+                showMessage('Text converted to uppercase.');
+                outputEditor.focus();
             } else {
                 showMessage('Select text to convert to uppercase.');
             }
-            uppercaseBtn.classList.add('active');
-            setTimeout(() => uppercaseBtn.classList.remove('active'), 200);
         });
 
         // Function to convert selected text to lowercase
         lowercaseBtn.addEventListener('click', () => {
             const selection = window.getSelection();
-            if (selection.rangeCount > 0) {
-                const range = selection.getRangeAt(0);
-                const selectedText = range.toString();
-                if (selectedText) {
-                    const newText = document.createTextNode(selectedText.toLowerCase());
-                    range.deleteContents();
-                    range.insertNode(newText);
-                    showMessage('Text converted to lowercase.');
-                    outputEditor.focus();
-                } else {
-                    showMessage('Select text to convert to lowercase.');
-                }
+            if (!selection.rangeCount || selection.isCollapsed) {
+                showMessage('Select text to convert to lowercase.');
+                return;
+            }
+            const range = selection.getRangeAt(0);
+            const selectedText = range.toString();
+            if (selectedText) {
+                const newText = document.createTextNode(selectedText.toLowerCase());
+                range.deleteContents();
+                range.insertNode(newText);
+                showMessage('Text converted to lowercase.');
+                outputEditor.focus();
             } else {
                 showMessage('Select text to convert to lowercase.');
             }
-            lowercaseBtn.classList.add('active');
-            setTimeout(() => lowercaseBtn.classList.remove('active'), 200);
         });
 
         // Function to insert a link
         insertLinkBtn.addEventListener('click', () => {
             const url = prompt('Enter the URL for the link:');
             if (url) {
-                executeCommand('createLink', url);
+                // Check if there's selected text; if not, use the URL as anchor text
+                const selection = window.getSelection();
+                if (selection.isCollapsed) {
+                    executeCommand('insertHTML', `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
+                } else {
+                    executeCommand('createLink', url);
+                }
                 showMessage('Link inserted.');
             }
-            insertLinkBtn.classList.add('active');
-            setTimeout(() => insertLinkBtn.classList.remove('active'), 200);
         });
 
         // Function to insert an image
         insertImageBtn.addEventListener('click', () => {
             const imageUrl = prompt('Enter the image URL:');
             if (imageUrl) {
+                const altText = prompt('Enter alt text for the image (important for SEO and accessibility):', '');
                 // Using insertHTML to add an onerror handler for broken images
-                const imgHtml = `<img src="${imageUrl}" alt="Inserted Image" style="max-width:100%; height:auto; border-radius: 8px;" onerror="this.onerror=null;this.src='https://placehold.co/150x100/E0E0E0/6C6C6C?text=Image+Error'; this.alt='Image failed to load';">`;
+                const imgHtml = `<img src="${imageUrl}" alt="${altText}" style="max-width:100%; height:auto; display: block; margin: 1em auto;" onerror="this.onerror=null;this.src='https://placehold.co/150x100/E0E0E0/6C6C6C?text=Image+Error'; this.alt='Image failed to load';">`;
                 executeCommand('insertHTML', imgHtml);
                 showMessage('Image inserted. (Note: Image must be publicly accessible)');
             }
-            insertImageBtn.classList.add('active');
-            setTimeout(() => insertImageBtn.classList.remove('active'), 200);
         });
 
         // Function to insert a table
@@ -591,30 +590,47 @@ https://goyalstech.com/services/seo-optimization"
             } else {
                 showMessage('Please enter valid numbers for rows and columns.');
             }
-            insertTableBtn.classList.add('active');
-            setTimeout(() => insertTableBtn.classList.remove('active'), 200);
         });
 
-        // Function to convert Markdown to HTML (and handle HTML links within Markdown)
+        // Function to convert Markdown to HTML
         function markdownToHtml(markdown) {
             let html = markdown;
+
+            // Convert external links provided in input area to proper HTML before other markdown parsing
+            const externalLinksText = externalLinksInput.value.trim();
+            if (externalLinksText) {
+                const links = externalLinksText.split('\n').map(link => link.trim()).filter(link => link !== '');
+                links.forEach(link => {
+                    // This is a simple replacement. A more advanced parser would contextually embed.
+                    // Here, we just bold and make it a link if the URL text appears in the generated content.
+                    const escapedLink = link.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special chars for regex
+                    const regex = new RegExp(`(?<!\\[)${escapedLink}(?!\\]\\()`, 'g'); // Avoid replacing if already part of markdown link
+                    html = html.replace(regex, `<strong><a href="${link}" target="_blank" rel="noopener noreferrer">${link}</a></strong>`);
+                });
+            }
 
             // Convert headings (H1, H2, H3)
             html = html.replace(/^### (.*)$/gm, '<h3>$1</h3>');
             html = html.replace(/^## (.*)$/gm, '<h2>$1</h2>');
             html = html.replace(/^# (.*)$/gm, '<h1>$1</h1>');
 
-            // Convert bold text (before links to avoid conflicts)
+            // Convert bold text (before links to avoid conflicts if bolding within links)
             html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            // Convert italic text
+            html = html.replace(/\*(.*?)\*/g, '<em>$1</em>'); // Changed from \_ to * for italic as per common markdown
 
             // Convert Markdown links: [Link Text](URL) to <a href="URL" target="_blank" rel="noopener noreferrer">Link Text</a>
-            // Note: The AI is now instructed to output Markdown links, so this conversion is crucial.
             html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
 
+            // Convert unordered lists
+            html = html.replace(/^\s*[-*+] (.*)$/gm, '<li>$1</li>');
+            html = html.replace(/(<li>.*<\/li>(\n|$))+/gs, '<ul>$&</ul>');
+
+            // Convert ordered lists
+            html = html.replace(/^\s*\d+\. (.*)$/gm, '<li>$1</li>');
+            html = html.replace(/(<li>.*<\/li>(\n|$))+/gs, '<ol>$&</ol>');
 
             // Handle tables generated by AI using Markdown table syntax
-            // This is a basic conversion and might need more advanced parsing for complex tables.
-            // It looks for a header row, a separator, and then content rows.
             const tableRegex = /^(?:\|(.+)\|)\n(?:\|(?:[-:]+)\|)+\n((?:\|.*\|(?:\n|$))+)/gm;
             html = html.replace(tableRegex, (match, headerLine, bodyLines) => {
                 const headers = headerLine.split('|').map(h => h.trim()).filter(h => h !== '');
@@ -638,15 +654,18 @@ https://goyalstech.com/services/seo-optimization"
                 return tableHtml;
             });
 
-
             // Convert paragraphs (lines separated by two or more newlines into <p> tags)
-            html = html.replace(/(\r?\n){2,}/g, '</p><p>');
-            html = `<p>${html}</p>`;
-            // Prevent <p> tags around existing block-level HTML elements
-            html = html.replace(/<p>\s*<(h[1-6]|ul|ol|table|div|img|a|strong|em|u|strike)>/g, '<$1>');
-            html = html.replace(/<\/(h[1-6]|ul|ol|table|div|img|a|strong|em|u|strike)>\s*<\/p>/g, '</$1>');
-            html = html.replace(/<p>\s*<\/p>/g, ''); // Remove any remaining empty paragraphs
-            html = html.replace(/\r?\n/g, '<br>'); // Convert remaining single newlines to <br> for line breaks
+            // Ensure this runs after block-level elements like lists and tables are handled
+            html = html.split(/\n{2,}/).map(paragraph => {
+                // Don't wrap if it already starts with a known HTML tag (e.g., <h1, <ul, <table, <img)
+                if (paragraph.trim().match(/^<(h[1-6]|ul|ol|table|div|img|p|strong|em|a|br)>/i)) {
+                    return paragraph;
+                }
+                return `<p>${paragraph.replace(/\n/g, '<br>')}</p>`;
+            }).join('');
+
+            // Clean up any empty <p> tags that might have resulted
+            html = html.replace(/<p><br><\/p>/g, '').replace(/<p>\s*<\/p>/g, '');
 
             return html;
         }
@@ -796,6 +815,8 @@ https://goyalstech.com/services/seo-optimization"
                 outputEditor.style.color = '#dc2626'; // text-red-600 equivalent
                 loadingIndicator.classList.add('hidden');
                 generateButton.disabled = false;
+                copyButton.disabled = true; // Keep disabled if no content
+                shareButton.disabled = true; // Keep disabled if no content
                 return;
             } else {
                 outputEditor.style.color = ''; // Reset color
@@ -837,9 +858,11 @@ https://goyalstech.com/services/seo-optimization"
                     // Convert the generated Markdown (and HTML links within it) to HTML and display it
                     outputEditor.innerHTML = markdownToHtml(generatedMarkdown);
                     editorControlsContainer.classList.remove('hidden'); // Show editor controls
+                    copyButton.disabled = false;
+                    shareButton.disabled = false;
                 } else {
                     // Handle cases where the response structure is unexpected or content is missing
-                    outputEditor.textContent = 'Failed to generate content. Please try again.';
+                    outputEditor.textContent = 'Failed to generate content. The AI did not return a valid response. Please try again.';
                     outputEditor.style.color = '#dc2626'; // text-red-600 equivalent
                     console.error('OpenRouter API response was unexpected:', result);
                 }
@@ -852,11 +875,8 @@ https://goyalstech.com/services/seo-optimization"
                 // Hide loading indicator and re-enable button
                 loadingIndicator.classList.add('hidden');
                 generateButton.disabled = false;
-                // Enable copy/share buttons only if content was generated and no error
-                if (outputEditor.textContent && outputEditor.textContent !== 'Your generated DeepSEO content will appear here and can be edited.' && outputEditor.style.color !== 'rgb(220, 38, 38)') {
-                    copyButton.disabled = false;
-                    shareButton.disabled = false;
-                }
+                // copyButton and shareButton state is now managed inside the try block for success,
+                // and explicitly set to disabled on error/initial state.
             }
         }
 
@@ -872,17 +892,20 @@ https://goyalstech.com/services/seo-optimization"
         // --- Copy Button Logic ---
         copyButton.addEventListener('click', () => {
             try {
+                // Select all content within the contenteditable div
                 const range = document.createRange();
                 range.selectNodeContents(outputEditor);
                 const selection = window.getSelection();
-                selection.removeAllRanges();
-                selection.addRange(range);
+                selection.removeAllRanges(); // Clear any existing selections
+                selection.addRange(range); // Add the new range
+
+                // Attempt to copy the selected content
                 document.execCommand('copy');
-                selection.removeAllRanges(); // Deselect the text
+                selection.removeAllRanges(); // Deselect the text after copying
                 showMessage('Content copied to clipboard!');
             } catch (err) {
                 console.error('Failed to copy content: ', err);
-                showMessage('Failed to copy content. Please try manually.');
+                showMessage('Failed to copy content. Please try manually selecting and copying.');
             }
         });
         // --- End Copy Button Logic ---
@@ -911,11 +934,15 @@ https://goyalstech.com/services/seo-optimization"
         shareOptions.forEach(option => {
             option.addEventListener('click', (event) => {
                 const platform = event.currentTarget.dataset.platform;
-                const content = outputEditor.innerText; // Get the text content for sharing
-                const pageUrl = window.location.href; // URL of the current page
+                // Get innerText for sharing platforms as they expect plain text
+                const content = outputEditor.innerText;
+                const pageUrl = window.location.href;
+
+                // Ensure the content is not too long for sharing (e.g., Twitter limits)
+                const truncatedContent = content.length > 500 ? content.substring(0, 497) + '...' : content;
 
                 let shareUrl = '';
-                let shareText = encodeURIComponent(`Check out this DeepSEO content I generated: \n\n${content.substring(0, 200)}... \n\nRead more at: ${pageUrl}`);
+                let shareText = encodeURIComponent(`Check out this DeepSEO content: "${truncatedContent}"\n\nGenerated with DeepSEO: ${pageUrl}`);
                 let shareTitle = encodeURIComponent("DeepSEO Generated Content");
 
                 switch (platform) {
@@ -926,8 +953,8 @@ https://goyalstech.com/services/seo-optimization"
                         shareUrl = `https://twitter.com/intent/tweet?text=${shareText}`;
                         break;
                     case 'linkedin':
-                        // LinkedIn share requires a URL, content is optional
-                        shareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(pageUrl)}&title=${shareTitle}&summary=${shareText}`;
+                        // LinkedIn share for articles/posts
+                        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}&title=${shareTitle}&summary=${encodeURIComponent(truncatedContent)}`;
                         break;
                     case 'email':
                         shareUrl = `mailto:?subject=${shareTitle}&body=${shareText}`;
@@ -946,7 +973,7 @@ https://goyalstech.com/services/seo-optimization"
 
         // Initial setup on window load
         window.onload = () => {
-            // Default Goyalstech information
+            // Default Goyalstech information for demonstration
             topicInput.value = "Digital Marketing Services for Businesses";
             articleTitleInput.value = "Boost Your Online Presence: The Power of Goyalstech Digital Marketing";
             keywordsInput.value = "digital marketing, SEO services, web development, online presence, Goyalstech, marketing solutions, website design";
@@ -969,4 +996,4 @@ https://goyalstech.com/services/seo-optimization`;
         };
     </script>
 </body>
-  </html>
+</html>
