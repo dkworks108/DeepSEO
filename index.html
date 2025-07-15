@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DeepSEO Content Generator</title>
-    <!-- Tailwind CSS CDN for simple and responsive styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Custom scrollbar for better aesthetics */
@@ -166,6 +164,7 @@
             <p class="text-center text-gray-600 mb-8">Enter your content requirements below and let DeepSEO do the magic!</p>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    
                 <div>
                     <label for="topic-input" class="block text-sm font-medium text-gray-700 mb-2">Topic / Information:</label>
                     <input type="text" id="topic-input" placeholder="e.g., 'Benefits of AI in Healthcare' or 'Show writing styles and tones'"
@@ -403,7 +402,6 @@ https://goyalstech.com/services/seo-optimization"
             'large': { min: 800, max: 1500, target: 1200 },
             'very-large': { min: 1500, max: 2500, target: 2000 }
         };
-
         // Mapping for writing styles/tones to their descriptions and structures
         const writingStyleToneMap = new Map([
             ['Informative', {
@@ -447,7 +445,6 @@ https://goyalstech.com/services/seo-optimization"
                 structure: 'Topic → Clear Definitions → Logical Sections → Summary'
             }]
         ]);
-
         // Get references to the input elements and the output display area
         const topicInput = document.getElementById('topic-input');
         const articleTitleInput = document.getElementById('article-title-input');
@@ -479,7 +476,6 @@ https://goyalstech.com/services/seo-optimization"
         const insertLinkBtn = document.getElementById('insert-link-btn');
         const insertImageBtn = document.getElementById('insert-image-btn');
         const insertTableBtn = document.getElementById('insert-table-btn');
-
         // Share Modal elements
         const shareModalOverlay = document.getElementById('share-modal-overlay');
         const closeShareModalBtn = document.getElementById('close-share-modal');
@@ -523,7 +519,6 @@ https://goyalstech.com/services/seo-optimization"
                 if (!startTime) startTime = currentTime;
                 const progress = (currentTime - startTime) / duration;
                 const currentPercentage = start + (end - start) * progress;
-
                 if (currentPercentage < end) {
                     updateProgressBar(Math.floor(currentPercentage), message);
                     requestAnimationFrame(animateStep);
@@ -540,7 +535,7 @@ https://goyalstech.com/services/seo-optimization"
             outputEditor.focus(); // Keep focus on the editor after command
             // Add temporary active state for buttons that don't auto-toggle (excluding undo/redo/insert types)
             const button = document.querySelector(`.editor-btn[data-command="${command}"][data-value="${value}"]`) ||
-                           document.querySelector(`.editor-btn[data-command="${command}"]`);
+                document.querySelector(`.editor-btn[data-command="${command}"]`);
             if (button && !['undo', 'redo', 'createLink', 'insertHTML'].includes(command)) {
                 button.classList.add('active');
                 setTimeout(() => {
@@ -557,7 +552,6 @@ https://goyalstech.com/services/seo-optimization"
                 executeCommand(command, value);
             });
         });
-
         // Event listener for font size select
         fontSizeSelect.addEventListener('change', (event) => {
             const size = event.target.value;
@@ -565,7 +559,6 @@ https://goyalstech.com/services/seo-optimization"
                 executeCommand('fontSize', size);
             }
         });
-
         // Event listener for font family select
         fontFamilySelect.addEventListener('change', (event) => {
             const font = event.target.value;
@@ -573,19 +566,16 @@ https://goyalstech.com/services/seo-optimization"
                 executeCommand('fontName', font);
             }
         });
-
         // Event listener for text color input
         textColorInput.addEventListener('input', (event) => {
             const color = event.target.value;
             executeCommand('foreColor', color);
         });
-
         // Event listener for background color input
         backgroundColorInput.addEventListener('input', (event) => {
             const color = event.target.value;
             executeCommand('backColor', color);
         });
-
         // Function to convert selected text to uppercase
         uppercaseBtn.addEventListener('click', () => {
             const selection = window.getSelection();
@@ -605,7 +595,6 @@ https://goyalstech.com/services/seo-optimization"
                 showMessage('Select text to convert to uppercase.');
             }
         });
-
         // Function to convert selected text to lowercase
         lowercaseBtn.addEventListener('click', () => {
             const selection = window.getSelection();
@@ -625,7 +614,6 @@ https://goyalstech.com/services/seo-optimization"
                 showMessage('Select text to convert to lowercase.');
             }
         });
-
         // Function to insert a link
         insertLinkBtn.addEventListener('click', () => {
             const url = prompt('Enter the URL for the link:');
@@ -641,7 +629,6 @@ https://goyalstech.com/services/seo-optimization"
             insertLinkBtn.classList.add('active');
             setTimeout(() => insertLinkBtn.classList.remove('active'), 200);
         });
-
         // Function to insert an image
         insertImageBtn.addEventListener('click', () => {
             const imageUrl = prompt('Enter the image URL:');
@@ -695,10 +682,8 @@ https://goyalstech.com/services/seo-optimization"
 
             // Convert bold text (before links to avoid conflicts)
             html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
             // Convert Markdown links: [Link Text](URL) to <a href="URL" target="_blank" rel="noopener noreferrer">Link Text</a>
             html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-
             // Handle tables generated by AI using Markdown table syntax
             const tableRegex = /^(?:\|(.+)\|)\n(?:\|(?:[-:]+)\|)+\n((?:\|.*\|(?:\n|$))+)/gm;
             html = html.replace(tableRegex, (match, headerLine, bodyLines) => {
@@ -768,7 +753,6 @@ https://goyalstech.com/services/seo-optimization"
             const styleStructure = styleToneInfo ? styleToneInfo.structure : '';
 
             let promptContent = '';
-
             if (topic.toLowerCase() === "show writing styles and tones") {
                 promptContent = `As a professional human content editor and SEO specialist, generate a detailed Markdown table outlining different writing styles and tones.
                 The table should have the following columns: "Rank", "Style/Tone", "Description", "Where It's Commonly Used", and "General Format Structure".
@@ -821,25 +805,25 @@ https://goyalstech.com/services/seo-optimization"
                 promptContent = `As a highly skilled human content editor and SEO specialist, your primary goal is to generate exceptional, unique, and human-like content for a webpage.
                 The content must be engaging, unique, and indistinguishable from human writing to pass AI detectors (like Originality.ai or GPTZero).
                 Focus on natural language, varied sentence structures, and a storytelling approach. Avoid any robotic or repetitive phrasing.
-
                 **Content Requirements:**
                 - **Topic/Information:** "${topic}"
                 ${articleTitle ? `- **Main Article Title (H1):** "${articleTitle}"` : ''}
                 - **Approximate Word Count:** Generate content around ${targetWordCount} words, within the range of ${wordCountRange}.
-                - **Keywords (Primary & LSI):** Integrate "${keywords}" naturally throughout the content. Ensure primary keywords appear within the first 100 words and in relevant subheadings. Avoid keyword stuffing.
+                - **Keywords (Primary & LSI):** Integrate "${keywords}" naturally throughout the content.
+                Ensure primary keywords appear within the first 100 words and in relevant subheadings. Avoid keyword stuffing.
                 - **Content Format:** Structure the content as a "${selectedContentFormat}".
                 - **Writing Style & Tone:** Adopt a "${selectedWritingStyleTone}" tone, which means: ${styleDescription}. Follow this general structure: ${styleStructure}.
                 - **Paragraphs:** Keep paragraphs short (2-3 lines maximum) for improved readability.
                 - **Voice:** Use active voice predominantly.
                 - **Transitions:** Ensure smooth and logical transitions between all sections and paragraphs.
                 - **Engagement:** Incorporate hook-style introductions, reader-friendly language, and consider including optional questions to the reader or relevant anecdotes.
-
                 **SEO & Linking Strategy:**
                 - **Hyperlinks:** Strategically use hyperlinks, especially internal links, for SEO.
-                    - **Relevant Anchor Text:** Use descriptive, keyword-rich anchor text (e.g., "explore our web development services") for all links. Avoid generic phrases like "click here." Vary anchor text naturally.
-                    - **Strategic Placement:** Prioritize placing internal links within the first 100 words and throughout the main content.
-                    - **Topic Clusters:** If applicable, demonstrate the concept of pillar pages and cluster content through internal linking.
-                    - **Link Density:** Maintain a "${selectedLinkDensity}" link density level.
+                - **Relevant Anchor Text:** Use descriptive, keyword-rich anchor text (e.g., "explore our web development services") for all links.
+                Avoid generic phrases like "click here." Vary anchor text naturally.
+                - **Strategic Placement:** Prioritize placing internal links within the first 100 words and throughout the main content.
+                - **Topic Clusters:** If applicable, demonstrate the concept of pillar pages and cluster content through internal linking.
+                - **Link Density:** Maintain a "${selectedLinkDensity}" link density level.
                 ${externalLinks ? `- **External Links:** It is crucial to incorporate the following external links naturally into the content. For each link, create a relevant anchor text that fits the surrounding paragraph. Use Markdown format [Anchor Text](URL): ${externalLinks.split('\n').map(link => link.trim()).join(', ')}` : ''}
 
                 **Formatting & Output:**
@@ -858,8 +842,18 @@ https://goyalstech.com/services/seo-optimization"
                 outputEditor.style.color = '';
             }
 
-            const apiKey = "AIzaSyC-nkbK7L2vRtzoRWHLJ3mwsEBBvDxfYjc"; // Canvas will automatically provide this at runtime
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            // --- 🚀 NEW API CONFIGURATION 🚀 ---
+            const apiKey = "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";
+            const apiUrl = "https://openrouter.ai/api/v1/chat/completions";
+            const modelName = "google/gemini-1.5-flash-free"; // Using a standard, free, and fast model
+            
+            const apiHeaders = {
+                "Authorization": `Bearer ${apiKey}`,
+                "HTTP-Referer": "https://dkworks108.github.io/DeepSEO/", // Your site URL
+                "X-Title": "DeepSEO Content Generator", // Your site title
+                "Content-Type": "application/json"
+            };
+            // --- END NEW API CONFIGURATION ---
 
             try {
                 // Step 1: Generate initial content
@@ -867,20 +861,21 @@ https://goyalstech.com/services/seo-optimization"
                 animateProgressBar(10, 45, 3000, 'Generating initial content...'); // Animate to 45% over 3 seconds
 
                 const generationPayload = {
-                    contents: [{ role: "user", parts: [{ text: promptContent }] }],
+                    model: modelName,
+                    messages: [{ role: "user", content: promptContent }]
                 };
+
                 const generationResponse = await fetch(apiUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: apiHeaders,
                     body: JSON.stringify(generationPayload)
                 });
+                
                 const generationResult = await generationResponse.json();
 
                 let generatedMarkdown = '';
-                if (generationResult.candidates && generationResult.candidates.length > 0 &&
-                    generationResult.candidates[0].content && generationResult.candidates[0].content.parts &&
-                    generationResult.candidates[0].content.parts.length > 0) {
-                    generatedMarkdown = generationResult.candidates[0].content.parts[0].text;
+                if (generationResult.choices && generationResult.choices.length > 0 && generationResult.choices[0].message?.content) {
+                    generatedMarkdown = generationResult.choices[0].message.content;
                 } else if (generationResult.error && generationResult.error.message) {
                     throw new Error(`Generation API Error: ${generationResult.error.message}`);
                 } else {
@@ -891,28 +886,33 @@ https://goyalstech.com/services/seo-optimization"
                 updateProgressBar(55, 'Humanizing content...');
                 animateProgressBar(55, 95, 3000, 'Humanizing content...'); // Animate to 95% over 3 seconds
 
-                const humanizePrompt = `Rewrite the following text to sound more natural, human-like, and less detectable by AI content detectors. Focus on varying sentence structures, using a diverse vocabulary, incorporating natural flow, and adding elements of human expression (e.g., subtle anecdotes, rhetorical questions, or a more conversational tone) without altering the core meaning or factual accuracy. Ensure the output is still optimized for SEO, maintaining keyword relevance and heading structure where appropriate. The output should be in Markdown format.
+                const humanizePrompt = `Rewrite the following text to sound more natural, human-like, and less detectable by AI content detectors.
+                Focus on varying sentence structures, using a diverse vocabulary, incorporating natural flow, and adding elements of human expression (e.g., subtle anecdotes, rhetorical questions, or a more conversational tone) without altering the core meaning or factual accuracy.
+                Ensure the output is still optimized for SEO, maintaining keyword relevance and heading structure where appropriate.
+                The output should be in Markdown format.
 
-Original Text to Humanize:
-\`\`\`
-${generatedMarkdown}
-\`\`\`
-`;
+                Original Text to Humanize:
+                \`\`\`
+                ${generatedMarkdown}
+                \`\`\`
+                `;
+
                 const humanizationPayload = {
-                    contents: [{ role: "user", parts: [{ text: humanizePrompt }] }],
+                    model: modelName,
+                    messages: [{ role: "user", content: humanizePrompt }]
                 };
+
                 const humanizationResponse = await fetch(apiUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: apiHeaders,
                     body: JSON.stringify(humanizationPayload)
                 });
+                
                 const humanizationResult = await humanizationResponse.json();
 
                 let finalMarkdown = '';
-                if (humanizationResult.candidates && humanizationResult.candidates.length > 0 &&
-                    humanizationResult.candidates[0].content && humanizationResult.candidates[0].content.parts &&
-                    humanizationResult.candidates[0].content.parts.length > 0) {
-                    finalMarkdown = humanizationResult.candidates[0].content.parts[0].text;
+                if (humanizationResult.choices && humanizationResult.choices.length > 0 && humanizationResult.choices[0].message?.content) {
+                    finalMarkdown = humanizationResult.choices[0].message.content;
                 } else if (humanizationResult.error && humanizationResult.error.message) {
                     throw new Error(`Humanization API Error: ${humanizationResult.error.message}`);
                 } else {
@@ -924,7 +924,6 @@ ${generatedMarkdown}
                 editorControlsContainer.classList.remove('hidden');
                 updateProgressBar(100, 'Content ready!');
                 showMessage('DeepSEO content generated and humanized successfully!');
-
             } catch (error) {
                 outputEditor.textContent = `An error occurred: ${error.message}. Please try again.`;
                 outputEditor.style.color = '#dc2626';
@@ -956,7 +955,6 @@ ${generatedMarkdown}
 
         // Add event listener to the generate button
         generateButton.addEventListener('click', generateDeepSEOContent);
-
         // --- Copy Button Logic ---
         copyButton.addEventListener('click', () => {
             try {
@@ -984,18 +982,15 @@ ${generatedMarkdown}
             }
             shareModalOverlay.classList.add('show');
         });
-
         closeShareModalBtn.addEventListener('click', () => {
             shareModalOverlay.classList.remove('show');
         });
-
         shareModalOverlay.addEventListener('click', (event) => {
             // Close modal if clicking outside the content
             if (event.target === shareModalOverlay) {
                 shareModalOverlay.classList.remove('show');
             }
         });
-
         shareOptions.forEach(option => {
             option.addEventListener('click', (event) => {
                 const platform = event.currentTarget.dataset.platform;
@@ -1043,7 +1038,6 @@ ${generatedMarkdown}
             externalLinksInput.value = `https://goyalstech.com/
 https://goyalstech.com/services/web-development
 https://goyalstech.com/services/seo-optimization`;
-
             // Set default selections for new features
             wordLengthSelect.value = 'medium';
             wordLimitHidden.value = wordLengthMap['medium'].target;
