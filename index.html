@@ -664,7 +664,7 @@ https://goyalstech.com/services/seo-optimization"
                 const altText = prompt('Enter alt text for the image (important for SEO and accessibility):', '');
                 const imgHtml = `<img src="${imageUrl}" alt="${altText}" style="max-width:100%; height:auto; display: block; margin: 1em auto; border-radius: 8px;" onerror="this.onerror=null;this.src='https://placehold.co/150x100/E0E0E0/6C6C6C?text=Image+Error'; this.alt='Image failed to load';">`;
                 executeCommand('insertHTML', imgHtml);
-                showMessage('Image inserted. (Note: Image must be publicly accessible)');
+                showMessage('Image inserted. (Note: Image must be publicly publicly accessible)');
             }
             insertImageBtn.classList.add('active');
             setTimeout(() => insertImageBtn.classList.remove('active'), 200);
@@ -877,7 +877,7 @@ https://goyalstech.com/services/seo-optimization"
 
             // --- 🚀 API CONFIGURATION 🚀 ---
             // IMPORTANT: Keep apiKey empty. Canvas will automatically provide the correct API key at runtime.
-            const apiKey = "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"; 
+            const apiKey = "AIzaSyDBFU7v6zExnHShkYUxkE6x6Fzk4O1ELrE"; 
             const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey;
             
             const apiHeaders = {
@@ -958,10 +958,10 @@ https://goyalstech.com/services/seo-optimization"
                 // Ensure spinner is normal color on success
                 loadingIndicator.classList.remove('error');
             } catch (error) {
-                outputEditor.textContent = `An error occurred: ${error.message}. Please try again.`;
+                outputEditor.textContent = `An error occurred. Please try again.`; // Simplified error message for UI
                 outputEditor.style.color = '#dc2626';
-                console.error('DeepSEO Process Error:', error);
-                updateProgressBar(0, 'Error: ' + error.message);
+                console.error('DeepSEO Process Error:', error); // Log full error to console for debugging
+                updateProgressBar(0, 'Error: Generation failed.');
                 // Add error class to loading indicator to turn spinner red
                 loadingIndicator.classList.add('error');
             } finally {
