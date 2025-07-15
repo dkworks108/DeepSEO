@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DeepSEO Content Generator</title>
+    <!-- Tailwind CSS CDN for simple and responsive styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* Custom scrollbar for better aesthetics */
@@ -135,6 +137,25 @@
             margin-right: 10px;
             font-size: 1.2rem;
         }
+
+        /* Progress bar styling */
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .progress-bar {
+            height: 20px;
+            width: 0%;
+            background-color: #4f46e5; /* Indigo-600 */
+            border-radius: 5px;
+            text-align: center;
+            color: white;
+            line-height: 20px;
+            transition: width 0.5s ease-in-out;
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 flex flex-col min-h-screen">
@@ -161,9 +182,11 @@
                     <label for="word-length-select" class="block text-sm font-medium text-gray-700 mb-2">Content Length:</label>
                     <select id="word-length-select"
                             class="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition duration-150 ease-in-out cursor-pointer">
-                        <option value="medium">Medium (500-800 words)</option>
+                        <option value="very-small">Very Small (150-300 words)</option>
                         <option value="small">Small (300-500 words)</option>
+                        <option value="medium">Medium (500-800 words)</option>
                         <option value="large">Large (800-1500 words)</option>
+                        <option value="very-large">Very Large (1500-2500 words)</option>
                     </select>
                     <input type="hidden" id="word-limit-hidden" value="800"> </div>
 
@@ -186,6 +209,22 @@
                             <input type="radio" name="content-format" value="research-paper" class="form-radio text-indigo-600">
                             <span class="ml-2 text-gray-700">Research Paper (Formal)</span>
                         </label>
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="content-format" value="product-description" class="form-radio text-indigo-600">
+                            <span class="ml-2 text-gray-700">Product Description</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="content-format" value="social-media-post" class="form-radio text-indigo-600">
+                            <span class="ml-2 text-gray-700">Social Media Post</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="content-format" value="email-newsletter" class="form-radio text-indigo-600">
+                            <span class="ml-2 text-gray-700">Email Newsletter</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="content-format" value="faq-section" class="form-radio text-indigo-600">
+                            <span class="ml-2 text-gray-700">FAQ Section</span>
+                        </label>
                     </div>
                 </div>
 
@@ -194,6 +233,8 @@
                     <select id="link-density-select"
                             class="w-full p-3 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition duration-150 ease-in-out cursor-pointer">
                         <option value="normal">Normal (SEO-friendly)</option>
+                        <option value="none">None (No Links)</option>
+                        <option value="minimal">Minimal (Very Few)</option>
                         <option value="more">More Links (Gray Hat)</option>
                         <option value="spammy">Spammy (High Density)</option>
                     </select>
@@ -246,7 +287,10 @@ https://goyalstech.com/services/seo-optimization"
                 <div class="animate-spin inline-block w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" role="status">
                     <span class="sr-only">Loading...</span>
                 </div>
-                <p class="mt-2">Generating content, please wait...</p>
+                <p class="mt-2" id="loading-message">Initializing...</p>
+                <div class="progress-bar-container mt-2">
+                    <div class="progress-bar" id="progress-bar-fill">0%</div>
+                </div>
             </div>
 
             <div id="editor-controls-container" class="hidden">
@@ -312,11 +356,11 @@ https://goyalstech.com/services/seo-optimization"
 
             <div class="flex justify-center gap-4 mt-6">
                 <button id="copy-button"
-                        class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 rounded-full shadow-md transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2" disabled>
+                        class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-6 rounded-full shadow-md transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2" disabled style="display: none;">
                     Copy Text
                 </button>
                 <button id="share-button"
-                        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-full shadow-md transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2" disabled>
+                        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-full shadow-md transform hover:scale-105 transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2" disabled style="display: none;">
                     Share
                 </button>
             </div>
@@ -353,9 +397,11 @@ https://goyalstech.com/services/seo-optimization"
     <script type="module">
         // Mapping for word length options to actual word limits
         const wordLengthMap = {
-            'small': 300,
-            'medium': 650,
-            'large': 1200
+            'very-small': { min: 150, max: 300, target: 225 },
+            'small': { min: 300, max: 500, target: 400 },
+            'medium': { min: 500, max: 800, target: 650 },
+            'large': { min: 800, max: 1500, target: 1200 },
+            'very-large': { min: 1500, max: 2500, target: 2000 }
         };
 
         // Mapping for writing styles/tones to their descriptions and structures
@@ -407,7 +453,7 @@ https://goyalstech.com/services/seo-optimization"
         const articleTitleInput = document.getElementById('article-title-input');
         const wordLengthSelect = document.getElementById('word-length-select');
         const wordLimitHidden = document.getElementById('word-limit-hidden');
-        const contentFormatRadios = document.querySelectorAll('input[name="content-format"]'); // This variable is not used but kept for consistency if needed later
+        const contentFormatRadios = document.querySelectorAll('input[name="content-format"]');
         const linkDensitySelect = document.getElementById('link-density-select');
         const writingStyleToneSelect = document.getElementById('writing-style-tone-select');
         const keywordsInput = document.getElementById('keywords-input');
@@ -415,10 +461,12 @@ https://goyalstech.com/services/seo-optimization"
         const generateButton = document.getElementById('generate-button');
         const outputEditor = document.getElementById('output-editor');
         const loadingIndicator = document.getElementById('loading-indicator');
+        const loadingMessage = document.getElementById('loading-message');
+        const progressBarFill = document.getElementById('progress-bar-fill');
         const copyButton = document.getElementById('copy-button');
         const shareButton = document.getElementById('share-button');
-        const messageBox = document.getElementById('message-box');
         const editorControlsContainer = document.getElementById('editor-controls-container');
+        const messageBox = document.getElementById('message-box');
 
         // Get references to editor buttons and selects
         const editorButtons = document.querySelectorAll('.editor-btn[data-command]');
@@ -439,11 +487,51 @@ https://goyalstech.com/services/seo-optimization"
 
         // Function to display messages to the user
         function showMessage(message, duration = 3000) {
-            messageBox.textContent = message;
-            messageBox.classList.add('show');
-            setTimeout(() => {
-                messageBox.classList.remove('show');
-            }, duration);
+            if (messageBox) { // Ensure messageBox is defined
+                messageBox.textContent = message;
+                messageBox.classList.add('show');
+                setTimeout(() => {
+                    messageBox.classList.remove('show');
+                }, duration);
+            } else {
+                console.error("Message box element not found!");
+            }
+        }
+
+        // Function to update the loading bar and message
+        function updateProgressBar(percentage, message) {
+            if (progressBarFill && loadingMessage && loadingIndicator) { // Ensure elements are defined
+                progressBarFill.style.width = `${percentage}%`;
+                progressBarFill.textContent = `${percentage}%`;
+                loadingMessage.textContent = message;
+                if (percentage === 0) {
+                    loadingIndicator.classList.remove('hidden');
+                } else if (percentage === 100) {
+                    setTimeout(() => {
+                        loadingIndicator.classList.add('hidden');
+                    }, 500); // Keep full bar for a moment
+                }
+            } else {
+                console.error("Progress bar elements not found!");
+            }
+        }
+
+        // Function to gradually update the progress bar
+        function animateProgressBar(start, end, duration, message) {
+            let startTime = null;
+            const animateStep = (currentTime) => {
+                if (!startTime) startTime = currentTime;
+                const progress = (currentTime - startTime) / duration;
+                const currentPercentage = start + (end - start) * progress;
+
+                if (currentPercentage < end) {
+                    updateProgressBar(Math.floor(currentPercentage), message);
+                    requestAnimationFrame(animateStep);
+                } else {
+                    updateProgressBar(end, message);
+                }
+            };
+            requestAnimationFrame(animateStep);
         }
 
         // Function to execute editor commands (bold, italic, underline, etc.)
@@ -542,7 +630,6 @@ https://goyalstech.com/services/seo-optimization"
         insertLinkBtn.addEventListener('click', () => {
             const url = prompt('Enter the URL for the link:');
             if (url) {
-                // Check if there's selected text; if not, use the URL as anchor text
                 const selection = window.getSelection();
                 if (selection.isCollapsed) {
                     executeCommand('insertHTML', `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
@@ -551,6 +638,8 @@ https://goyalstech.com/services/seo-optimization"
                 }
                 showMessage('Link inserted.');
             }
+            insertLinkBtn.classList.add('active');
+            setTimeout(() => insertLinkBtn.classList.remove('active'), 200);
         });
 
         // Function to insert an image
@@ -558,11 +647,12 @@ https://goyalstech.com/services/seo-optimization"
             const imageUrl = prompt('Enter the image URL:');
             if (imageUrl) {
                 const altText = prompt('Enter alt text for the image (important for SEO and accessibility):', '');
-                // Using insertHTML to add an onerror handler for broken images
-                const imgHtml = `<img src="${imageUrl}" alt="${altText}" style="max-width:100%; height:auto; display: block; margin: 1em auto;" onerror="this.onerror=null;this.src='https://placehold.co/150x100/E0E0E0/6C6C6C?text=Image+Error'; this.alt='Image failed to load';">`;
+                const imgHtml = `<img src="${imageUrl}" alt="${altText}" style="max-width:100%; height:auto; display: block; margin: 1em auto; border-radius: 8px;" onerror="this.onerror=null;this.src='https://placehold.co/150x100/E0E0E0/6C6C6C?text=Image+Error'; this.alt='Image failed to load';">`;
                 executeCommand('insertHTML', imgHtml);
                 showMessage('Image inserted. (Note: Image must be publicly accessible)');
             }
+            insertImageBtn.classList.add('active');
+            setTimeout(() => insertImageBtn.classList.remove('active'), 200);
         });
 
         // Function to insert a table
@@ -590,45 +680,24 @@ https://goyalstech.com/services/seo-optimization"
             } else {
                 showMessage('Please enter valid numbers for rows and columns.');
             }
+            insertTableBtn.classList.add('active');
+            setTimeout(() => insertTableBtn.classList.remove('active'), 200);
         });
 
-        // Function to convert Markdown to HTML
+        // Function to convert Markdown to HTML (and handle HTML links within Markdown)
         function markdownToHtml(markdown) {
             let html = markdown;
-
-            // Convert external links provided in input area to proper HTML before other markdown parsing
-            const externalLinksText = externalLinksInput.value.trim();
-            if (externalLinksText) {
-                const links = externalLinksText.split('\n').map(link => link.trim()).filter(link => link !== '');
-                links.forEach(link => {
-                    // This is a simple replacement. A more advanced parser would contextually embed.
-                    // Here, we just bold and make it a link if the URL text appears in the generated content.
-                    const escapedLink = link.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special chars for regex
-                    const regex = new RegExp(`(?<!\\[)${escapedLink}(?!\\]\\()`, 'g'); // Avoid replacing if already part of markdown link
-                    html = html.replace(regex, `<strong><a href="${link}" target="_blank" rel="noopener noreferrer">${link}</a></strong>`);
-                });
-            }
 
             // Convert headings (H1, H2, H3)
             html = html.replace(/^### (.*)$/gm, '<h3>$1</h3>');
             html = html.replace(/^## (.*)$/gm, '<h2>$1</h2>');
             html = html.replace(/^# (.*)$/gm, '<h1>$1</h1>');
 
-            // Convert bold text (before links to avoid conflicts if bolding within links)
+            // Convert bold text (before links to avoid conflicts)
             html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            // Convert italic text
-            html = html.replace(/\*(.*?)\*/g, '<em>$1</em>'); // Changed from \_ to * for italic as per common markdown
 
             // Convert Markdown links: [Link Text](URL) to <a href="URL" target="_blank" rel="noopener noreferrer">Link Text</a>
             html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-
-            // Convert unordered lists
-            html = html.replace(/^\s*[-*+] (.*)$/gm, '<li>$1</li>');
-            html = html.replace(/(<li>.*<\/li>(\n|$))+/gs, '<ul>$&</ul>');
-
-            // Convert ordered lists
-            html = html.replace(/^\s*\d+\. (.*)$/gm, '<li>$1</li>');
-            html = html.replace(/(<li>.*<\/li>(\n|$))+/gs, '<ol>$&</ol>');
 
             // Handle tables generated by AI using Markdown table syntax
             const tableRegex = /^(?:\|(.+)\|)\n(?:\|(?:[-:]+)\|)+\n((?:\|.*\|(?:\n|$))+)/gm;
@@ -655,37 +724,38 @@ https://goyalstech.com/services/seo-optimization"
             });
 
             // Convert paragraphs (lines separated by two or more newlines into <p> tags)
-            // Ensure this runs after block-level elements like lists and tables are handled
-            html = html.split(/\n{2,}/).map(paragraph => {
-                // Don't wrap if it already starts with a known HTML tag (e.g., <h1, <ul, <table, <img)
-                if (paragraph.trim().match(/^<(h[1-6]|ul|ol|table|div|img|p|strong|em|a|br)>/i)) {
-                    return paragraph;
-                }
-                return `<p>${paragraph.replace(/\n/g, '<br>')}</p>`;
-            }).join('');
-
-            // Clean up any empty <p> tags that might have resulted
-            html = html.replace(/<p><br><\/p>/g, '').replace(/<p>\s*<\/p>/g, '');
+            html = html.replace(/(\r?\n){2,}/g, '</p><p>');
+            html = `<p>${html}</p>`;
+            // Prevent <p> tags around existing block-level HTML elements
+            html = html.replace(/<p>\s*<(h[1-6]|ul|ol|table|div|img|a|strong|em|u|strike)>/g, '<$1>');
+            html = html.replace(/<\/(h[1-6]|ul|ol|table|div|img|a|strong|em|u|strike)>\s*<\/p>/g, '</$1>');
+            html = html.replace(/<p>\s*<\/p>/g, ''); // Remove any remaining empty paragraphs
+            html = html.replace(/\r?\n/g, '<br>'); // Convert remaining single newlines to <br> for line breaks
 
             return html;
         }
 
 
-        // Function to generate content using the OpenRouter API
+        // Function to generate content using the Gemini API
         async function generateDeepSEOContent() {
-            // Show loading indicator and clear previous output
-            loadingIndicator.classList.remove('hidden');
-            outputEditor.textContent = ''; // Use textContent for security before parsing
-            editorControlsContainer.classList.add('hidden'); // Hide editor controls during generation
-            generateButton.disabled = true; // Disable button during generation
-            copyButton.disabled = true; // Disable copy button
-            shareButton.disabled = true; // Disable share button
+            // Reset UI and disable/hide buttons
+            updateProgressBar(0, 'Initializing content generation...');
+            outputEditor.textContent = ''; // Clear previous output
+            editorControlsContainer.classList.add('hidden'); // Hide editor controls
+            generateButton.disabled = true;
+            copyButton.disabled = true;
+            shareButton.disabled = true;
+            copyButton.style.display = 'none'; // Hide copy button
+            shareButton.style.display = 'none'; // Hide share button
+
 
             const topic = topicInput.value.trim();
             const articleTitle = articleTitleInput.value.trim();
             const selectedWordLength = wordLengthSelect.value;
-            const wordLimit = wordLengthMap[selectedWordLength] || 650; // Get word limit from map
-            wordLimitHidden.value = wordLimit; // Update hidden field
+            const wordLimitInfo = wordLengthMap[selectedWordLength];
+
+            let wordCountRange = `${wordLimitInfo.min}-${wordLimitInfo.max} words`;
+            let targetWordCount = wordLimitInfo.target;
 
             const selectedContentFormat = document.querySelector('input[name="content-format"]:checked').value;
             const selectedLinkDensity = linkDensitySelect.value;
@@ -693,17 +763,14 @@ https://goyalstech.com/services/seo-optimization"
             const keywords = keywordsInput.value.trim();
             const externalLinks = externalLinksInput.value.trim();
 
-            // Retrieve description and structure for the selected style/tone
             const styleToneInfo = writingStyleToneMap.get(selectedWritingStyleTone);
             const styleDescription = styleToneInfo ? styleToneInfo.description : '';
             const styleStructure = styleToneInfo ? styleToneInfo.structure : '';
 
-            let prompt = '';
+            let promptContent = '';
 
-            // Check if the user is asking for the writing styles table
             if (topic.toLowerCase() === "show writing styles and tones") {
-                // Construct the prompt specifically for generating the writing styles table
-                prompt = `As a professional human content editor and SEO specialist, generate a detailed Markdown table outlining different writing styles and tones.
+                promptContent = `As a professional human content editor and SEO specialist, generate a detailed Markdown table outlining different writing styles and tones.
                 The table should have the following columns: "Rank", "Style/Tone", "Description", "Where It's Commonly Used", and "General Format Structure".
                 For the "General Format Structure" column, use arrows (→) or bullet points to indicate the sequence or flow of sections.
                 The descriptions should be concise, clear, and aligned with common industry understanding.
@@ -751,139 +818,140 @@ https://goyalstech.com/services/seo-optimization"
                   General Format Structure: Topic → Clear Definitions → Logical Sections → Summary
                 `;
             } else {
-                // Original prompt for generating an article
-                prompt = `As a professional human content editor and SEO specialist, your task is to generate content for a webpage.
-                The content should read like it was written by a human — use a natural, conversational tone and storytelling style.
-                Vary sentence structures and avoid robotic or repetitive phrasing.
-                Optimize for SEO using:
-                - The given primary and LSI keywords naturally, ensuring they appear within the first 100 words and in subheadings where relevant, without keyword stuffing.
-                - Proper heading structure (H1, H2, H3 where applicable).
-                - Active voice and short paragraphs (2–3 lines max). Break down longer paragraphs for improved readability.
-                - Smooth transition sentences between sections to ensure logical flow.
-                - A compelling meta description (150–160 characters) at the very end of the content, which is keyword-rich and engaging.
-                Enhance engagement by including:
-                - Hook-style introductions.
-                - Reader-friendly language.
-                - Optional questions to the reader or anecdotes.
-                Ensure uniqueness by:
-                - Rewriting in a different voice every time.
-                - Avoiding sentence pattern repetition.
-                - Using alternative synonyms and phrase structures.
-                - Adapting tone randomly (e.g., professional, friendly, inspirational, informative).
-                The content must pass AI detectors (like Originality.ai or GPTZero).
-                Always maintain factual correctness and relevance to the topic.
+                promptContent = `As a highly skilled human content editor and SEO specialist, your primary goal is to generate exceptional, unique, and human-like content for a webpage.
+                The content must be engaging, unique, and indistinguishable from human writing to pass AI detectors (like Originality.ai or GPTZero).
+                Focus on natural language, varied sentence structures, and a storytelling approach. Avoid any robotic or repetitive phrasing.
 
-                **Crucially, when generating content, pay close attention to the strategic use of hyperlinks, especially internal links, for SEO purposes. Incorporate the following principles:**
-                - **Hyperlink Definition & Types:** Briefly explain what hyperlinks are (internal vs. external).
-                - **SEO Importance:** Detail why hyperlinks are vital for both user experience (navigation, bounce rate, time-on-site) and search engines (crawlability, link equity, topic clusters).
-                - **Google's Stance:** Reflect Google's emphasis on internal links for understanding website structure and page importance.
-                - **Best Practices for Internal Linking:**
-                    - **Relevant Anchor Text:** Always use descriptive, keyword-rich anchor text (e.g., "explore our web development services") instead of generic phrases like "click here" or "read more." Ensure anchor text is varied.
-                    - **Avoid Exact-Match Overuse:** Vary anchor text naturally to avoid appearing spammy.
-                    - **Strategic Placement:** Prioritize placing internal links within the first 100 words of the page and throughout the main content. Avoid relying solely on footers or sidebars.
-                    - **Topic Clusters:** Explain the concept of pillar pages and cluster content, and how internal linking supports this.
-                    - **Link from High-Traffic to Low-Traffic Pages:** Explain the benefit of spreading link equity.
-                - **Crawlability & Traffic Boost:** Explain how internal linking helps Googlebot discover pages faster and boosts traffic.
-                - **Common Mistakes to Avoid:** Mention issues like too many links, repetitive anchor text, broken links, and lack of contextual links.
-                - **Tools for Auditing:** Briefly mention relevant tools.
-                - **Call to Action (CTA) Formatting:** Ensure CTAs are distinctly formatted for clarity and emphasis (e.g., bolded, separate paragraph).
-                - **Image Optimization:** Include a recommendation to add descriptive alt text to images for accessibility and SEO.
-                - **Structured Data:** Suggest the use of structured data markup (e.g., Schema.org) to enhance SEO and improve search engine understanding.
-                - **User Experience (UX) Enhancements:** Emphasize improvements like adding a table of contents for long articles, ensuring mobile responsiveness, and advising fast page loading.
-                - **Summary:** Conclude with a concise summary of internal linking best practices.
+                **Content Requirements:**
+                - **Topic/Information:** "${topic}"
+                ${articleTitle ? `- **Main Article Title (H1):** "${articleTitle}"` : ''}
+                - **Approximate Word Count:** Generate content around ${targetWordCount} words, within the range of ${wordCountRange}.
+                - **Keywords (Primary & LSI):** Integrate "${keywords}" naturally throughout the content. Ensure primary keywords appear within the first 100 words and in relevant subheadings. Avoid keyword stuffing.
+                - **Content Format:** Structure the content as a "${selectedContentFormat}".
+                - **Writing Style & Tone:** Adopt a "${selectedWritingStyleTone}" tone, which means: ${styleDescription}. Follow this general structure: ${styleStructure}.
+                - **Paragraphs:** Keep paragraphs short (2-3 lines maximum) for improved readability.
+                - **Voice:** Use active voice predominantly.
+                - **Transitions:** Ensure smooth and logical transitions between all sections and paragraphs.
+                - **Engagement:** Incorporate hook-style introductions, reader-friendly language, and consider including optional questions to the reader or relevant anecdotes.
 
-                Here are the specific inputs for this content generation request:
-                Topic/Information: "${topic}"
-                ${articleTitle ? `Main Article Title (H1): "${articleTitle}"` : ''}
-                Approximate Word Limit: ${wordLimit} words
-                Keywords (Primary & LSI): ${keywords}
-                Content Format: ${selectedContentFormat}
-                Link Density Level: ${selectedLinkDensity}
-                Writing Style & Tone: ${selectedWritingStyleTone} (${styleDescription})
-                General Format Structure for this style: ${styleStructure}
-                ${externalLinks ? `External Links to consider for natural, HTML-formatted inclusion: ${externalLinks.split('\n').join(', ')}` : ''}
+                **SEO & Linking Strategy:**
+                - **Hyperlinks:** Strategically use hyperlinks, especially internal links, for SEO.
+                    - **Relevant Anchor Text:** Use descriptive, keyword-rich anchor text (e.g., "explore our web development services") for all links. Avoid generic phrases like "click here." Vary anchor text naturally.
+                    - **Strategic Placement:** Prioritize placing internal links within the first 100 words and throughout the main content.
+                    - **Topic Clusters:** If applicable, demonstrate the concept of pillar pages and cluster content through internal linking.
+                    - **Link Density:** Maintain a "${selectedLinkDensity}" link density level.
+                ${externalLinks ? `- **External Links:** It is crucial to incorporate the following external links naturally into the content. For each link, create a relevant anchor text that fits the surrounding paragraph. Use Markdown format [Anchor Text](URL): ${externalLinks.split('\n').map(link => link.trim()).join(', ')}` : ''}
 
-                Format the output strictly in **Markdown for headings, paragraphs, and general bolding**.
-                **For all links, use Markdown format like [Anchor Text](URL).**
-                Meta Description: Include a meta description at the very end of the article, clearly labeled as "Meta Description:".
+                **Formatting & Output:**
+                - **Output Format:** Strictly format the entire output in **Markdown**. Use Markdown for headings (H1, H2, H3), paragraphs, bolding, lists, and **all links (e.g., [Anchor Text](URL))**.
+                - **Meta Description:** At the very end of the content, include a compelling meta description (150-160 characters), clearly labeled as "Meta Description:", which is keyword-rich and engaging.
                 `;
             }
 
-            // Basic validation for required fields (only for article generation)
             if (topic.toLowerCase() !== "show writing styles and tones" && (!topic || !keywords)) {
                 outputEditor.textContent = 'Please provide a topic/info and keywords to generate content.';
-                outputEditor.style.color = '#dc2626'; // text-red-600 equivalent
-                loadingIndicator.classList.add('hidden');
+                outputEditor.style.color = '#dc2626';
+                updateProgressBar(0, 'Error: Missing topic or keywords.');
                 generateButton.disabled = false;
-                copyButton.disabled = true; // Keep disabled if no content
-                shareButton.disabled = true; // Keep disabled if no content
                 return;
             } else {
-                outputEditor.style.color = ''; // Reset color
+                outputEditor.style.color = '';
             }
 
-            // Your OpenRouter API Key
-            const OPENROUTER_API_KEY = "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";
-            // Replace with your actual site URL and name for OpenRouter rankings (optional)
-            const YOUR_SITE_URL = "https://goyalstech.com";
-            const YOUR_SITE_NAME = "DeepSEO Content Generator";
+            const apiKey = "AIzaSyC-nkbK7L2vRtzoRWHLJ3mwsEBBvDxfYjc"; // Canvas will automatically provide this at runtime
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
             try {
-                // Make the API call to OpenRouter
-                const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
-                        "HTTP-Referer": YOUR_SITE_URL,
-                        "X-Title": YOUR_SITE_NAME,
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        "model": "nousresearch/deephermes-3-llama-3-8b-preview:free", // Or any other model available on OpenRouter
-                        "messages": [
-                            {
-                                "role": "user",
-                                "content": prompt
-                            }
-                        ]
-                    })
+                // Step 1: Generate initial content
+                updateProgressBar(10, 'Generating initial content...');
+                animateProgressBar(10, 45, 3000, 'Generating initial content...'); // Animate to 45% over 3 seconds
+
+                const generationPayload = {
+                    contents: [{ role: "user", parts: [{ text: promptContent }] }],
+                };
+                const generationResponse = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(generationPayload)
                 });
+                const generationResult = await generationResponse.json();
 
-                const result = await response.json();
+                let generatedMarkdown = '';
+                if (generationResult.candidates && generationResult.candidates.length > 0 &&
+                    generationResult.candidates[0].content && generationResult.candidates[0].content.parts &&
+                    generationResult.candidates[0].content.parts.length > 0) {
+                    generatedMarkdown = generationResult.candidates[0].content.parts[0].text;
+                } else if (generationResult.error && generationResult.error.message) {
+                    throw new Error(`Generation API Error: ${generationResult.error.message}`);
+                } else {
+                    throw new Error('Unexpected API response during content generation.');
+                }
 
-                // Check if the response contains valid content
-                if (result.choices && result.choices.length > 0 &&
-                    result.choices[0].message && result.choices[0].message.content) {
-                    const generatedMarkdown = result.choices[0].message.content;
-                    // Convert the generated Markdown (and HTML links within it) to HTML and display it
-                    outputEditor.innerHTML = markdownToHtml(generatedMarkdown);
-                    editorControlsContainer.classList.remove('hidden'); // Show editor controls
+                // Step 2: Humanize the generated content
+                updateProgressBar(55, 'Humanizing content...');
+                animateProgressBar(55, 95, 3000, 'Humanizing content...'); // Animate to 95% over 3 seconds
+
+                const humanizePrompt = `Rewrite the following text to sound more natural, human-like, and less detectable by AI content detectors. Focus on varying sentence structures, using a diverse vocabulary, incorporating natural flow, and adding elements of human expression (e.g., subtle anecdotes, rhetorical questions, or a more conversational tone) without altering the core meaning or factual accuracy. Ensure the output is still optimized for SEO, maintaining keyword relevance and heading structure where appropriate. The output should be in Markdown format.
+
+Original Text to Humanize:
+\`\`\`
+${generatedMarkdown}
+\`\`\`
+`;
+                const humanizationPayload = {
+                    contents: [{ role: "user", parts: [{ text: humanizePrompt }] }],
+                };
+                const humanizationResponse = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(humanizationPayload)
+                });
+                const humanizationResult = await humanizationResponse.json();
+
+                let finalMarkdown = '';
+                if (humanizationResult.candidates && humanizationResult.candidates.length > 0 &&
+                    humanizationResult.candidates[0].content && humanizationResult.candidates[0].content.parts &&
+                    humanizationResult.candidates[0].content.parts.length > 0) {
+                    finalMarkdown = humanizationResult.candidates[0].content.parts[0].text;
+                } else if (humanizationResult.error && humanizationResult.error.message) {
+                    throw new Error(`Humanization API Error: ${humanizationResult.error.message}`);
+                } else {
+                    throw new Error('Unexpected API response during humanization.');
+                }
+
+                // Display final content
+                outputEditor.innerHTML = markdownToHtml(finalMarkdown);
+                editorControlsContainer.classList.remove('hidden');
+                updateProgressBar(100, 'Content ready!');
+                showMessage('DeepSEO content generated and humanized successfully!');
+
+            } catch (error) {
+                outputEditor.textContent = `An error occurred: ${error.message}. Please try again.`;
+                outputEditor.style.color = '#dc2626';
+                console.error('DeepSEO Process Error:', error);
+                updateProgressBar(0, 'Error: ' + error.message);
+                showMessage('Content generation failed. See console for details.');
+            } finally {
+                generateButton.disabled = false;
+                // Enable and show copy/share buttons only if content was successfully generated and displayed
+                if (outputEditor.textContent && outputEditor.textContent !== 'Your generated DeepSEO content will appear here and can be edited.' && outputEditor.style.color !== 'rgb(220, 38, 38)') {
                     copyButton.disabled = false;
                     shareButton.disabled = false;
+                    copyButton.style.display = 'inline-block'; // Show copy button
+                    shareButton.style.display = 'inline-block'; // Show share button
                 } else {
-                    // Handle cases where the response structure is unexpected or content is missing
-                    outputEditor.textContent = 'Failed to generate content. The AI did not return a valid response. Please try again.';
-                    outputEditor.style.color = '#dc2626'; // text-red-600 equivalent
-                    console.error('OpenRouter API response was unexpected:', result);
+                    copyButton.disabled = true;
+                    shareButton.disabled = true;
+                    copyButton.style.display = 'none'; // Keep hidden on error
+                    shareButton.style.display = 'none'; // Keep hidden on error
                 }
-            } catch (error) {
-                // Handle network errors or other exceptions
-                outputEditor.textContent = 'An error occurred while connecting to the DeepSEO service. Please check your internet connection and try again.';
-                outputEditor.style.color = '#dc2626'; // text-red-600 equivalent
-                console.error('Error generating DeepSEO content:', error);
-            } finally {
-                // Hide loading indicator and re-enable button
-                loadingIndicator.classList.add('hidden');
-                generateButton.disabled = false;
-                // copyButton and shareButton state is now managed inside the try block for success,
-                // and explicitly set to disabled on error/initial state.
             }
         }
 
         // Add event listener for word length select to update hidden input
         wordLengthSelect.addEventListener('change', (event) => {
             const selectedValue = event.target.value;
-            wordLimitHidden.value = wordLengthMap[selectedValue];
+            wordLimitHidden.value = wordLengthMap[selectedValue].target;
         });
 
         // Add event listener to the generate button
@@ -892,20 +960,17 @@ https://goyalstech.com/services/seo-optimization"
         // --- Copy Button Logic ---
         copyButton.addEventListener('click', () => {
             try {
-                // Select all content within the contenteditable div
                 const range = document.createRange();
                 range.selectNodeContents(outputEditor);
                 const selection = window.getSelection();
-                selection.removeAllRanges(); // Clear any existing selections
-                selection.addRange(range); // Add the new range
-
-                // Attempt to copy the selected content
+                selection.removeAllRanges();
+                selection.addRange(range);
                 document.execCommand('copy');
-                selection.removeAllRanges(); // Deselect the text after copying
+                selection.removeAllRanges(); // Deselect the text
                 showMessage('Content copied to clipboard!');
             } catch (err) {
                 console.error('Failed to copy content: ', err);
-                showMessage('Failed to copy content. Please try manually selecting and copying.');
+                showMessage('Failed to copy content. Please try manually.');
             }
         });
         // --- End Copy Button Logic ---
@@ -913,7 +978,7 @@ https://goyalstech.com/services/seo-optimization"
         // --- Share Button Logic ---
         shareButton.addEventListener('click', () => {
             const contentToShare = outputEditor.innerText; // Get plain text for sharing
-            if (contentToShare.trim() === '' || contentToShare.trim() === 'Your generated DeepSEO content will appear here and can be edited.') {
+            if (!contentToShare.trim() || contentToShare.trim() === 'Your generated DeepSEO content will appear here and can be edited.') {
                 showMessage('Generate some content first to share!');
                 return;
             }
@@ -934,15 +999,13 @@ https://goyalstech.com/services/seo-optimization"
         shareOptions.forEach(option => {
             option.addEventListener('click', (event) => {
                 const platform = event.currentTarget.dataset.platform;
-                // Get innerText for sharing platforms as they expect plain text
-                const content = outputEditor.innerText;
-                const pageUrl = window.location.href;
-
-                // Ensure the content is not too long for sharing (e.g., Twitter limits)
-                const truncatedContent = content.length > 500 ? content.substring(0, 497) + '...' : content;
+                const content = outputEditor.innerText; // Get the text content for sharing
+                const pageUrl = window.location.href; // URL of the current page
 
                 let shareUrl = '';
-                let shareText = encodeURIComponent(`Check out this DeepSEO content: "${truncatedContent}"\n\nGenerated with DeepSEO: ${pageUrl}`);
+                // Shorten content for social media shares if it's too long
+                const truncatedContent = content.length > 200 ? content.substring(0, 197) + '...' : content;
+                let shareText = encodeURIComponent(`Check out this DeepSEO content I generated: \n\n${truncatedContent} \n\nRead more at: ${pageUrl}`);
                 let shareTitle = encodeURIComponent("DeepSEO Generated Content");
 
                 switch (platform) {
@@ -953,8 +1016,8 @@ https://goyalstech.com/services/seo-optimization"
                         shareUrl = `https://twitter.com/intent/tweet?text=${shareText}`;
                         break;
                     case 'linkedin':
-                        // LinkedIn share for articles/posts
-                        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}&title=${shareTitle}&summary=${encodeURIComponent(truncatedContent)}`;
+                        // LinkedIn share requires a URL, content is optional
+                        shareUrl = `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(pageUrl)}&title=${shareTitle}&summary=${shareText}`;
                         break;
                     case 'email':
                         shareUrl = `mailto:?subject=${shareTitle}&body=${shareText}`;
@@ -973,7 +1036,7 @@ https://goyalstech.com/services/seo-optimization"
 
         // Initial setup on window load
         window.onload = () => {
-            // Default Goyalstech information for demonstration
+            // Default Goyalstech information
             topicInput.value = "Digital Marketing Services for Businesses";
             articleTitleInput.value = "Boost Your Online Presence: The Power of Goyalstech Digital Marketing";
             keywordsInput.value = "digital marketing, SEO services, web development, online presence, Goyalstech, marketing solutions, website design";
@@ -983,16 +1046,21 @@ https://goyalstech.com/services/seo-optimization`;
 
             // Set default selections for new features
             wordLengthSelect.value = 'medium';
-            wordLimitHidden.value = wordLengthMap['medium']; // Set corresponding word count
+            wordLimitHidden.value = wordLengthMap['medium'].target;
             document.querySelector('input[name="content-format"][value="blog"]').checked = true;
             linkDensitySelect.value = 'normal';
             writingStyleToneSelect.value = 'Informative'; // Default to Informative
 
-            // Disable copy/share buttons initially as there's no generated content
+            // Disable and hide copy/share buttons initially as there's no generated content
             copyButton.disabled = true;
             shareButton.disabled = true;
+            copyButton.style.display = 'none';
+            shareButton.style.display = 'none';
+
             // Hide editor controls initially
             editorControlsContainer.classList.add('hidden');
+            updateProgressBar(0, 'Ready to generate content.'); // Initial message for progress bar
+            loadingIndicator.classList.add('hidden'); // Ensure hidden on load
         };
     </script>
 </body>
