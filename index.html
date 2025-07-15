@@ -143,16 +143,38 @@
             border-radius: 5px;
             overflow: hidden;
             margin-top: 10px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); /* Inner shadow for depth */
         }
         .progress-bar {
             height: 20px;
             width: 0%;
-            background-color: #4f46e5; /* Indigo-600 */
+            background: linear-gradient(to right, #6366f1, #8b5cf6); /* Indigo to Violet gradient */
             border-radius: 5px;
             text-align: center;
             color: white;
             line-height: 20px;
-            transition: width 0.5s ease-in-out;
+            transition: width 0.5s ease-in-out, background 0.5s ease-in-out; /* Smooth transition for background */
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3); /* Text shadow for better readability */
+            position: relative;
+            overflow: hidden;
+        }
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(-100%);
+            animation: progress-stripes 2s linear infinite;
+            border-radius: 5px;
+        }
+
+        @keyframes progress-stripes {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
     </style>
 </head>
@@ -843,14 +865,10 @@ https://goyalstech.com/services/seo-optimization"
             }
 
             // --- 🚀 NEW API CONFIGURATION 🚀 ---
-            const apiKey = "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";
-            const apiUrl = "https://openrouter.ai/api/v1/chat/completions";
-            const modelName = "google/gemini-1.5-flash-free"; // Using a standard, free, and fast model
+            const apiKey = ""; // Keep this empty, Canvas will provide it
+            const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey;
             
             const apiHeaders = {
-                "Authorization": `Bearer ${apiKey}`,
-                "HTTP-Referer": "https://dkworks108.github.io/DeepSEO/", // Your site URL
-                "X-Title": "DeepSEO Content Generator", // Your site title
                 "Content-Type": "application/json"
             };
             // --- END NEW API CONFIGURATION ---
@@ -861,8 +879,7 @@ https://goyalstech.com/services/seo-optimization"
                 animateProgressBar(10, 45, 3000, 'Generating initial content...'); // Animate to 45% over 3 seconds
 
                 const generationPayload = {
-                    model: modelName,
-                    messages: [{ role: "user", content: promptContent }]
+                    contents: [{ role: "user", parts: [{ text: promptContent }] }]
                 };
 
                 const generationResponse = await fetch(apiUrl, {
@@ -874,8 +891,8 @@ https://goyalstech.com/services/seo-optimization"
                 const generationResult = await generationResponse.json();
 
                 let generatedMarkdown = '';
-                if (generationResult.choices && generationResult.choices.length > 0 && generationResult.choices[0].message?.content) {
-                    generatedMarkdown = generationResult.choices[0].message.content;
+                if (generationResult.candidates && generationResult.candidates.length > 0 && generationResult.candidates[0].content && generationResult.candidates[0].content.parts && generationResult.candidates[0].content.parts.length > 0) {
+                    generatedMarkdown = generationResult.candidates[0].content.parts[0].text;
                 } else if (generationResult.error && generationResult.error.message) {
                     throw new Error(`Generation API Error: ${generationResult.error.message}`);
                 } else {
@@ -898,8 +915,7 @@ https://goyalstech.com/services/seo-optimization"
                 `;
 
                 const humanizationPayload = {
-                    model: modelName,
-                    messages: [{ role: "user", content: humanizePrompt }]
+                    contents: [{ role: "user", parts: [{ text: humanizePrompt }] }]
                 };
 
                 const humanizationResponse = await fetch(apiUrl, {
@@ -911,8 +927,8 @@ https://goyalstech.com/services/seo-optimization"
                 const humanizationResult = await humanizationResponse.json();
 
                 let finalMarkdown = '';
-                if (humanizationResult.choices && humanizationResult.choices.length > 0 && humanizationResult.choices[0].message?.content) {
-                    finalMarkdown = humanizationResult.choices[0].message.content;
+                if (humanizationResult.candidates && humanizationResult.candidates.length > 0 && humanizationResult.candidates[0].content && humanizationResult.candidates[0].content.parts && humanizationResult.candidates[0].content.parts.length > 0) {
+                    finalMarkdown = humanizationResult.candidates[0].content.parts[0].text;
                 } else if (humanizationResult.error && humanizationResult.error.message) {
                     throw new Error(`Humanization API Error: ${humanizationResult.error.message}`);
                 } else {
@@ -923,13 +939,13 @@ https://goyalstech.com/services/seo-optimization"
                 outputEditor.innerHTML = markdownToHtml(finalMarkdown);
                 editorControlsContainer.classList.remove('hidden');
                 updateProgressBar(100, 'Content ready!');
-                showMessage('DeepSEO content generated and humanized successfully!');
+                // Removed the success message notification
             } catch (error) {
                 outputEditor.textContent = `An error occurred: ${error.message}. Please try again.`;
                 outputEditor.style.color = '#dc2626';
                 console.error('DeepSEO Process Error:', error);
                 updateProgressBar(0, 'Error: ' + error.message);
-                showMessage('Content generation failed. See console for details.');
+                // Removed the failure message notification
             } finally {
                 generateButton.disabled = false;
                 // Enable and show copy/share buttons only if content was successfully generated and displayed
