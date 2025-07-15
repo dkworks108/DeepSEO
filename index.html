@@ -808,27 +808,27 @@ https://goyalstech.com/services/seo-optimization"
                   Commonly Used: Reports, whitepapers, B2B, academic
                   General Format Structure: Executive Summary → Sections → Data/Stats → Formal Conclusion
                 - Style/Tone: Persuasive
-                  Description: Tries to influence or convince the reader.
+                  Description: Tries to influence or convince the reader.',
                   Commonly Used: Sales pages, ads, landing pages
                   General Format Structure: Problem → Agitate → Solution → Benefits → CTA
                 - Style/Tone: Narrative
-                  Description: Tells a story; often personal or brand-driven.
+                  Description: Tells a story; often personal or brand-driven.',
                   Commonly Used: Blogs, brand storytelling, speeches
                   General Format Structure: Setup → Conflict → Resolution → Moral/CTA
                 - Style/Tone: Descriptive
-                  Description: Focuses on detailed imagery or descriptions.
+                  Description: Focuses on detailed imagery or descriptions.',
                   Commonly Used: Product descriptions, creative writing
                   General Format Structure: Sensory Language → Metaphors → Features → Emotional Hook
                 - Style/Tone: Analytical
-                  Description: Breaks down data or trends with reasoning.
+                  Description: Breaks down data or trends with reasoning.',
                   Commonly Used: Market reports, case studies, essays
                   General Format Structure: Thesis → Evidence → Breakdown → Conclusion
                 - Style/Tone: Technical
-                  Description: Precise, jargon-heavy, instructional tone.
+                  Description: Precise, jargon-heavy, instructional tone.',
                   Commonly Used: Manuals, software docs, APIs
                   General Format Structure: Introduction → Requirements → Step-by-Step Instructions → Troubleshooting
                 - Style/Tone: Expository
-                  Description: Explains concepts or ideas neutrally.
+                  Description: Explains concepts or ideas neutrally.',
                   Commonly Used: Encyclopedias, textbooks, Wikipedia
                   General Format Structure: Topic → Clear Definitions → Logical Sections → Summary
                 `;
@@ -904,6 +904,15 @@ https://goyalstech.com/services/seo-optimization"
                     body: JSON.stringify(generationPayload)
                 });
                 
+                // Check for 403 specifically
+                if (generationResponse.status === 403) {
+                    throw new Error("API Access Forbidden: Please ensure the Gemini API is enabled for your Google Cloud project and that your environment is correctly configured to provide the API key.");
+                }
+                if (!generationResponse.ok) {
+                    const errorBody = await generationResponse.json();
+                    throw new Error(`API Error: ${generationResponse.status} ${generationResponse.statusText} - ${errorBody.error ? errorBody.error.message : 'Unknown error'}`);
+                }
+
                 const generationResult = await generationResponse.json();
 
                 let generatedMarkdown = '';
@@ -940,6 +949,15 @@ https://goyalstech.com/services/seo-optimization"
                     body: JSON.stringify(humanizationPayload)
                 });
                 
+                // Check for 403 specifically for humanization step
+                if (humanizationResponse.status === 403) {
+                    throw new Error("API Access Forbidden (Humanization): Please ensure the Gemini API is enabled for your Google Cloud project and that your environment is correctly configured to provide the API key.");
+                }
+                if (!humanizationResponse.ok) {
+                    const errorBody = await humanizationResponse.json();
+                    throw new Error(`API Error (Humanization): ${humanizationResponse.status} ${humanizationResponse.statusText} - ${errorBody.error ? errorBody.error.message : 'Unknown error'}`);
+                }
+
                 const humanizationResult = await humanizationResponse.json();
 
                 let finalMarkdown = '';
@@ -958,7 +976,7 @@ https://goyalstech.com/services/seo-optimization"
                 // Ensure spinner is normal color on success
                 loadingIndicator.classList.remove('error');
             } catch (error) {
-                outputEditor.textContent = `An error occurred. Please try again.`; // Simplified error message for UI
+                outputEditor.textContent = `An error occurred: ${error.message}. Please try again.`; // Display the specific error message
                 outputEditor.style.color = '#dc2626';
                 console.error('DeepSEO Process Error:', error); // Log full error to console for debugging
                 updateProgressBar(0, 'Error: Generation failed.');
