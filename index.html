@@ -176,6 +176,12 @@
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
         }
+
+        /* Error spinner color */
+        #loading-indicator.error .animate-spin {
+            border-color: #dc2626; /* Red-600 for error */
+            border-top-color: transparent;
+        }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 flex flex-col min-h-screen">
@@ -755,6 +761,9 @@ https://goyalstech.com/services/seo-optimization"
             copyButton.style.display = 'none'; // Hide copy button
             shareButton.style.display = 'none'; // Hide share button
 
+            // Ensure loading indicator is not in error state at the start of a new generation
+            loadingIndicator.classList.remove('error');
+
 
             const topic = topicInput.value.trim();
             const articleTitle = articleTitleInput.value.trim();
@@ -859,19 +868,26 @@ https://goyalstech.com/services/seo-optimization"
                 outputEditor.style.color = '#dc2626';
                 updateProgressBar(0, 'Error: Missing topic or keywords.');
                 generateButton.disabled = false;
+                // Add error class to loading indicator to turn spinner red
+                loadingIndicator.classList.add('error');
                 return;
             } else {
                 outputEditor.style.color = '';
             }
 
-            // --- 🚀 NEW API CONFIGURATION 🚀 ---
-            const apiKey = "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"; // Keep this empty, Canvas will provide it
+            // --- 🚀 API CONFIGURATION 🚀 ---
+            // IMPORTANT: Keep apiKey empty. Canvas will automatically provide the correct API key at runtime.
+            const apiKey = "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"; 
             const apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey;
             
             const apiHeaders = {
                 "Content-Type": "application/json"
             };
-            // --- END NEW API CONFIGURATION ---
+
+            // Log API details for debugging
+            console.log("Using API Key:", apiKey ? "Provided by Canvas" : "Empty (Canvas should inject)");
+            console.log("Calling API URL:", apiUrl);
+            // --- END API CONFIGURATION ---
 
             try {
                 // Step 1: Generate initial content
@@ -939,13 +955,15 @@ https://goyalstech.com/services/seo-optimization"
                 outputEditor.innerHTML = markdownToHtml(finalMarkdown);
                 editorControlsContainer.classList.remove('hidden');
                 updateProgressBar(100, 'Content ready!');
-                // Removed the success message notification
+                // Ensure spinner is normal color on success
+                loadingIndicator.classList.remove('error');
             } catch (error) {
                 outputEditor.textContent = `An error occurred: ${error.message}. Please try again.`;
                 outputEditor.style.color = '#dc2626';
                 console.error('DeepSEO Process Error:', error);
                 updateProgressBar(0, 'Error: ' + error.message);
-                // Removed the failure message notification
+                // Add error class to loading indicator to turn spinner red
+                loadingIndicator.classList.add('error');
             } finally {
                 generateButton.disabled = false;
                 // Enable and show copy/share buttons only if content was successfully generated and displayed
