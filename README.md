@@ -35,3 +35,11 @@ Then it generates Markdown-based SEO content, converts it to HTML, and displays 
   - Insert link / image / table
 - Copy generated content
 - Share content using modal:
+- WhatsApp
+  - Twitter
+  - LinkedIn
+  - Email
+- Progress bar and loading animation
+- Notification message popup system
+
+---
