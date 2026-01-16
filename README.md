@@ -18,3 +18,9 @@ Then it generates Markdown-based SEO content, converts it to HTML, and displays 
 
 ---
 ## Features
+
+- Responsive UI using TailwindCSS
+- SEO-friendly content generation prompts
+- Markdown to HTML conversion
+- Built-in Rich Text Editor (contenteditable)
+- Editor Toolbar Features:
