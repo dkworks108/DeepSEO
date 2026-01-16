@@ -3,3 +3,4 @@ DeepSEO Content Generator is a modern, SEO-focused web tool that helps users gen
 
 ---
 ## Project Overview
+This project provides a clean UI where users can enter content requirements like:
