@@ -17,3 +17,4 @@ This project provides a clean UI where users can enter content requirements like
 Then it generates Markdown-based SEO content, converts it to HTML, and displays it inside a rich editor.
 
 ---
+## Features
