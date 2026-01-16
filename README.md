@@ -1,8 +1,11 @@
 # DeepSEO Content Generator
+
 DeepSEO Content Generator is a modern, SEO-focused web tool that helps users generate unique, human-like, and SEO optimized content with editing and sharing features.
 
 ---
+
 ## Project Overview
+
 This project provides a clean UI where users can enter content requirements like:
 
 - Topic / Information
@@ -17,6 +20,7 @@ This project provides a clean UI where users can enter content requirements like
 Then it generates Markdown-based SEO content, converts it to HTML, and displays it inside a rich editor.
 
 ---
+
 ## Features
 
 - Responsive UI using TailwindCSS
@@ -24,7 +28,7 @@ Then it generates Markdown-based SEO content, converts it to HTML, and displays 
 - Markdown to HTML conversion
 - Built-in Rich Text Editor (contenteditable)
 - Editor Toolbar Features:
-- Bold / Italic / Underline / Strikethrough
+  - Bold / Italic / Underline / Strikethrough
   - Headings (H2, H3) and Paragraph
   - Font size selector
   - Font family selector
@@ -35,7 +39,7 @@ Then it generates Markdown-based SEO content, converts it to HTML, and displays 
   - Insert link / image / table
 - Copy generated content
 - Share content using modal:
-- WhatsApp
+  - WhatsApp
   - Twitter
   - LinkedIn
   - Email
@@ -43,6 +47,7 @@ Then it generates Markdown-based SEO content, converts it to HTML, and displays 
 - Notification message popup system
 
 ---
+
 ## Tech Stack
 
 - HTML5
@@ -53,9 +58,10 @@ Then it generates Markdown-based SEO content, converts it to HTML, and displays 
 - Gemini API (Google Generative AI)
 
 ---
+
 ## Folder Structure
+
 ```txt
 DeepSEO/
 ├── index.html
 └── README.md
-
