@@ -33,3 +33,5 @@ Then it generates Markdown-based SEO content, converts it to HTML, and displays 
   - Bullet list and numbered list
   - Undo and redo
   - Insert link / image / table
+- Copy generated content
+- Share content using modal:
