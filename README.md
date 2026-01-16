@@ -44,3 +44,12 @@ Then it generates Markdown-based SEO content, converts it to HTML, and displays 
 
 ---
 ## Tech Stack
+
+- HTML5
+- TailwindCSS
+- JavaScript (ES Module)
+- FontAwesome
+- Google Fonts (Inter)
+- Gemini API (Google Generative AI)
+
+---
