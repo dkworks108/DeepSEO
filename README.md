@@ -53,3 +53,5 @@ Then it generates Markdown-based SEO content, converts it to HTML, and displays 
 - Gemini API (Google Generative AI)
 
 ---
+## Folder Structure
+
