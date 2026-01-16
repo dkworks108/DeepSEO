@@ -24,3 +24,12 @@ Then it generates Markdown-based SEO content, converts it to HTML, and displays 
 - Markdown to HTML conversion
 - Built-in Rich Text Editor (contenteditable)
 - Editor Toolbar Features:
+- Bold / Italic / Underline / Strikethrough
+  - Headings (H2, H3) and Paragraph
+  - Font size selector
+  - Font family selector
+  - Text color and highlight color
+  - Text alignment (left/center/right/justify)
+  - Bullet list and numbered list
+  - Undo and redo
+  - Insert link / image / table
