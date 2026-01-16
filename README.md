@@ -43,3 +43,4 @@ Then it generates Markdown-based SEO content, converts it to HTML, and displays 
 - Notification message popup system
 
 ---
+## Tech Stack
