@@ -54,4 +54,8 @@ Then it generates Markdown-based SEO content, converts it to HTML, and displays 
 
 ---
 ## Folder Structure
+```txt
+DeepSEO/
+├── index.html
+└── README.md
 
