@@ -31,7 +31,7 @@ Then it generates Markdown-based SEO content, converts it to HTML, and displays 
   - Bold / Italic / Underline / Strikethrough
   - Headings (H2, H3) and Paragraph
   - Font size selector
-  - Font family selector
+  - Font a family selector
   - Text color and highlight color
   - Text alignment (left/center/right/justify)
   - Bullet list and numbered list
